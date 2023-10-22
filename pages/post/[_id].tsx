@@ -44,7 +44,7 @@ const Post = ({ post }: Props) => {
         if (session.user?.id)
           client
             .fetch(`*[_type == "author" && _id=='${session.user.id}']`)
-            .then((data:[Author]) => {
+            .then((data: [Author]) => {
               if (data[0]) {
                 setUser(data[0]);
               } else setUser(session.user);
@@ -53,9 +53,29 @@ const Post = ({ post }: Props) => {
     });
   }, []);
 
-  const alreadyLiked = !!post.appreciatedBy?.filter(
-    (item: any) => item?.userId === user?._id
+  const alreadyAppreciated = !!post.appreciatedBy?.filter(
+    (item: any) => item?._ref === user?._id
   ).length;
+
+  const appreciatePost = (id: string) => {
+    if (alreadyAppreciated) {
+      // implement unapprecaite functionality here
+      return;
+    }
+    client
+      .patch(id)
+      .setIfMissing({ appreciatedBy: [] })
+      .insert('after', 'appreciatedBy[-1]', [
+        {
+          _key: uuidv4(),
+          _ref: user._id,
+        },
+      ])
+      .commit()
+      .then(() => {
+        window.location.reload();
+      });
+  };
 
   const alreadyFollowing =
     !!post.author.followers?.filter((item: any) => item?._ref === user?._id)
@@ -103,7 +123,7 @@ const Post = ({ post }: Props) => {
   const onSubmit: SubmitHandler<InputForm> = (data) => {
     fetch('/api/createComment', {
       method: 'POST',
-      body: JSON.stringify(data), 
+      body: JSON.stringify(data),
     })
       .then(() => {
         setSubmitted(true);
@@ -225,14 +245,14 @@ const Post = ({ post }: Props) => {
             </p>
             {user && (
               <p className='flex items-center mt-5 text-gray-400 cursor-pointer hover:text-gray-500 w-fit'>
-                {alreadyLiked ? (
+                {alreadyAppreciated ? (
                   <p className='flex items-center'>
                     <AiFillHeart className='text-xl mr-2 text-gray-800' />
                   </p>
                 ) : (
                   <AiOutlineHeart
                     onClick={() => {
-                      // appreciatePost(post._id)
+                      appreciatePost(post._id)
                     }}
                     className='text-2xl mr-2'
                   />
@@ -306,14 +326,14 @@ const Post = ({ post }: Props) => {
           </p>
           {user && (
             <p className='flex items-center mt-5 text-gray-400 cursor-pointer hover:text-gray-500 w-fit'>
-              {alreadyLiked ? (
+              {alreadyAppreciated ? (
                 <p className='flex items-center'>
                   <AiFillHeart className='text-xl mr-2 text-gray-800' />
                 </p>
               ) : (
                 <AiOutlineHeart
                   onClick={() => {
-                    // appreciatePost(post._id)
+                    appreciatePost(post._id)
                   }}
                   className='text-2xl mr-2'
                 />

@@ -34,7 +34,7 @@ export const fetchUserByName = `*[_type == "author" && (name match $search || us
 }`
 export const fetchAuthor = `
 *[_type == "author" && _id == $_id][0]{
-  _id, name, profile, username, bio, imageUrl
+  _id, name, profile, username, bio, imageUrl, followers, followings
 }
 `
 
@@ -46,8 +46,9 @@ export const postsQuery = `*[_type == "post" && author._ref==$_id]{
   name, profile, bio, _id, imageUrl, username
 },
 "comments": *[
-  _type == "comment" && post._ref == ^._id && approved == true
+  _type == "comment" && post._ref == ^._id
 ] | order(_createdAt desc),
+appreciatedBy,
 description,
 body
 }`

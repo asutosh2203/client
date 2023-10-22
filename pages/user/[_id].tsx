@@ -6,7 +6,7 @@ import Head from 'next/head';
 import { Header } from '../../components';
 import { longMonths } from '../../utils/time';
 import { useRouter } from 'next/router';
-import { AiOutlineComment } from 'react-icons/ai';
+import { AiOutlineComment, AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { postsQuery } from '../../utils/sanityQueries';
 import { useSession } from 'next-auth/react';
 import { AuthLoading, Unauth } from '../../components';
@@ -18,10 +18,11 @@ const User: React.FC<{ author: Author; postsByAuthor: [Post] }> = ({
 }) => {
   const router = useRouter();
 
-  const { status } = useSession();
+  const { status, data } = useSession();
 
   if (status === 'loading') return <AuthLoading title='Profile' />;
   if (status === 'unauthenticated') return <Unauth />;
+
   return (
     <div>
       <Head>
@@ -43,6 +44,10 @@ const User: React.FC<{ author: Author; postsByAuthor: [Post] }> = ({
           </p>
           <p className='text-gray-400 font-light pb-3 cursor-default'>
             {author.bio}
+          </p>
+          <p className='flex gap-3'>
+            <p>{author.followers ? author.followers.length : 0} Followers</p>
+            <p> {author.followings ? author.followings.length : 0} Following</p>
           </p>
         </div>
         {postsByAuthor.length <= 0 && (
@@ -82,10 +87,22 @@ const User: React.FC<{ author: Author; postsByAuthor: [Post] }> = ({
               >
                 Read complete story
               </p>
-              <p className='flex items-center text-gray-400 mt-4'>
-                <AiOutlineComment fontSize={24} className='mr-2' />
-                {post.comments?.length}
-              </p>
+              <div className='flex gap-3'>
+                <p className='flex items-center text-gray-400 mt-4'>
+                  <AiOutlineComment fontSize={24} className='mr-2' />
+                  {post.comments?.length}
+                </p>
+                <p className='flex items-center text-gray-400 mt-4'>
+                  {!!post.appreciatedBy?.filter(
+                    (appreciator: any) => appreciator._ref === data?.user?.id
+                  ).length ? (
+                    <AiFillHeart fontSize={24} className='mr-2' />
+                  ) : (
+                    <AiOutlineHeart fontSize={24} className='mr-2' />
+                  )}
+                  {post.appreciatedBy ? post.appreciatedBy.length : 0}
+                </p>
+              </div>
             </div>
           );
         })}
