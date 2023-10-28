@@ -12,7 +12,10 @@ import {
   names,
 } from 'unique-names-generator';
 
-const Header: React.FC<{ isOnAuthorPage?: boolean }> = ({ isOnAuthorPage }) => {
+const Header: React.FC<{ isOnAuthorPage?: boolean; isOnProfile?: boolean }> = ({
+  isOnAuthorPage,
+  isOnProfile,
+}) => {
   const [showToolbox, setShowToolbox] = useState<boolean>(false);
   const [user, setUser] = useState<any>();
   const [author, setAuthor] = useState<any>();
@@ -57,7 +60,7 @@ const Header: React.FC<{ isOnAuthorPage?: boolean }> = ({ isOnAuthorPage }) => {
             alt='company-logo'
           />
         </Link>
-        {isOnAuthorPage && (
+        {isOnAuthorPage && !isOnProfile && (
           <div className='hidden md:inline-flex items-center space-x-5'>
             <h3 className='cursor-pointer'>About</h3>
             <h3 className='cursor-pointer'>Contact</h3>

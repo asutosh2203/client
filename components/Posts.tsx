@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { urlFor } from '../sanityClient';
 import { Post } from '../typings';
 
-const Posts: React.FC<{ posts: [Post] }> = ({ posts }) => {
+const Posts: React.FC<{ posts: [Post] }> = ({ posts = [] }) => {
   if (!posts.length) {
     return (
       <div className='max-w-7xl mx-auto'>

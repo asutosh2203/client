@@ -1,6 +1,26 @@
 export const fetchAllPosts: string = `*[_type == "post"]| order(_createdAt desc){_id, title, author -> {
   name, profile, bio, _id, imageUrl, username, followers
-}, description, mainImage, slug}`
+}, description, mainImage, slug}`;
+
+export const fetchAllFollowing: string = `*[_type == "author" && _id == $_id][0]{
+  followings
+}`;
+
+export const fetchAllFollowedPosts: Function = (followings: any = []) => {
+  if (followings.length <= 0) {
+    return '';
+  }
+  let query = '*[';
+  followings.map((following: any) => {
+    query += `_type == "post" && author->_id == "${following._ref}"||`;
+  });
+  query = query.slice(0, -2);
+  query += `]| order(_createdAt desc){_id, title, author -> {
+    name, profile, bio, _id, imageUrl, username, followers
+  }, description, mainImage, slug}`;
+
+  return query;
+};
 
 export const fetchPost: string = `*[_type == "post" && _id == $_id][0]{
     _id, 
@@ -17,26 +37,26 @@ export const fetchPost: string = `*[_type == "post" && _id == $_id][0]{
   slug, 
   body,
   appreciatedBy
-  }`
+  }`;
 
 export const fetchAllAuthors: string = `
 *[_type == "author"]{
   _id
 }
-`
+`;
 export const fetchUserById = (userId: string) => `
 *[_type == "author" && _id=="${userId}"]{
   _id, name, profile, username, imageUrl, bio
 }
-`
+`;
 export const fetchUserByName = `*[_type == "author" && (name match $search || username match $search)]{
   _id, name, profile, username, bio, imageUrl
-}`
+}`;
 export const fetchAuthor = `
 *[_type == "author" && _id == $_id][0]{
   _id, name, profile, username, bio, imageUrl, followers, followings
 }
-`
+`;
 
 export const postsQuery = `*[_type == "post" && author._ref==$_id]{
   _id, 
@@ -51,7 +71,7 @@ export const postsQuery = `*[_type == "post" && author._ref==$_id]{
 appreciatedBy,
 description,
 body
-}`
+}`;
 
 export const postSearchQuery = `*[_type == "post" && (title match $search || description match $search || $search in categories[])]{
   _id, 
@@ -66,4 +86,4 @@ export const postSearchQuery = `*[_type == "post" && (title match $search || des
 description,
 mainImage,
 body
-}`
+}`;
