@@ -1,72 +1,72 @@
-import Head from 'next/head'
-import { useSession, getSession } from 'next-auth/react'
-import { Unauth, AuthLoading, Spinner } from '../components'
-import { useRouter } from 'next/router'
-import { ChangeEvent, useEffect, useState } from 'react'
-import { Header } from '../components'
-import { client } from '../sanityClient'
-import { SanityImageAssetDocument } from '@sanity/client'
-import { AiOutlineCloudUpload } from 'react-icons/ai'
-import { MdDelete } from 'react-icons/md'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import useToaster from '../utils/toaster'
+import Head from 'next/head';
+import { useSession, getSession } from 'next-auth/react';
+import { Unauth, AuthLoading, Spinner } from '../components';
+import { useRouter } from 'next/router';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { Header } from '../components';
+import { client } from '../sanityClient';
+import { SanityImageAssetDocument } from '@sanity/client';
+import { AiOutlineCloudUpload } from 'react-icons/ai';
+import { MdDelete } from 'react-icons/md';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import useToaster from '../utils/toaster';
 
 const newStory = () => {
-  const [user, setUser] = useState<any>()
+  const [user, setUser] = useState<any>();
   const [content, setContent] = useState<{
-    title: string
-    story: string
-    desc: string
+    title: string;
+    story: string;
+    desc: string;
   }>({
     title: '',
     story: '',
     desc: '',
-  })
+  });
   const [contentImage, setContentImage] =
-    useState<SanityImageAssetDocument | null>()
-  const [imageLoading, setImageLoading] = useState(false)
-  const [imageError, setImageError] = useState(false)
+    useState<SanityImageAssetDocument | null>();
+  const [imageLoading, setImageLoading] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
-        setUser(session.user)
+        setUser(session.user);
       }
-    })
-  }, [])
+    });
+  }, []);
 
-  const { status } = useSession()
+  const { status } = useSession();
 
   const uploadImage = (e: ChangeEvent<HTMLInputElement>) => {
-    const { type, name } = e.target.files![0]
+    const { type, name } = e.target.files![0];
 
     if (type.match(/image.*/)) {
-      setImageLoading(true)
+      setImageLoading(true);
       client.assets
         .upload('image', e.target.files![0], {
           contentType: type,
           filename: name,
         })
         .then((document) => {
-          setContentImage(document)
-          setImageLoading(false)
+          setContentImage(document);
+          setImageLoading(false);
         })
         .catch((error) => {
-          console.error('Image Upload Error', error)
-        })
+          console.error('Image Upload Error', error);
+        });
     } else {
-      setImageError(true)
+      setImageError(true);
     }
-  }
+  };
 
   const publishStory = () => {
-    let slug = ''
+    let slug = '';
 
     if (content.title && content.story && user) {
-      slug = content.title.toLowerCase().replace(/\s/g, '-')
+      slug = content.title.toLowerCase().replace(/\s/g, '-');
       fetch('/api/createPost', {
         method: 'POST',
         body: JSON.stringify({
@@ -77,30 +77,30 @@ const newStory = () => {
         }),
       })
         .then(() => {
-          router.replace('/')
+          router.replace('/');
         })
         .catch((err) => {
-          console.log(err)
-        })
+          console.log(err);
+        });
     } else {
-      useToaster('error', 'Please fill in all fields')
+      useToaster('error', 'Please fill in all fields');
     }
-  }
+  };
 
-  if (status === 'loading') return <AuthLoading title='New Story' />
-  else if (status === 'unauthenticated') return <Unauth />
+  if (status === 'loading') return <AuthLoading title='New Story' />;
+  else if (status === 'unauthenticated') return <Unauth />;
   else
     return (
       <div className='max-w-7xl mx-auto'>
         <ToastContainer theme='colored' />
-        <Header />
+        <Header isOnAuthorPage={false} isOnProfile={false} />
         <div className='my-4 mx-2 flex items-center justify-between'>
           <p>
             By{' '}
             <span
               className='text-green-600 hover:underline underline-offset-2 cursor-pointer hover:text-green-800 mb-5'
               onClick={() => {
-                router.push(`/user/${user?.id}`)
+                router.push(`/user/${user?.id}`);
               }}
             >
               {user?.name}
@@ -158,7 +158,7 @@ const newStory = () => {
                   type='button'
                   className='absolute bottom-3 right-3 p-2 rounded-full bg-black text-xl cursor-pointer outline-none hove:shadow-xl hover:scale-110 transition-all duration-100 ease-in-out'
                   onClick={() => {
-                    setContentImage(null)
+                    setContentImage(null);
                   }}
                 >
                   <MdDelete color='red' />
@@ -174,7 +174,7 @@ const newStory = () => {
               type='text'
               value={content.title}
               onChange={(e) => {
-                setContent({ ...content, title: e.target.value })
+                setContent({ ...content, title: e.target.value });
               }}
             />
           </div>
@@ -188,7 +188,7 @@ const newStory = () => {
               type='text'
               value={content.desc}
               onChange={(e) => {
-                setContent({ ...content, desc: e.target.value })
+                setContent({ ...content, desc: e.target.value });
               }}
             />
           </div>
@@ -198,13 +198,13 @@ const newStory = () => {
               className='text-xl w-full px-4 py-2 my-4 h-[80%] outline-none'
               value={content.story}
               onChange={(e) => {
-                setContent({ ...content, story: e.target.value })
+                setContent({ ...content, story: e.target.value });
               }}
             />
           </div>
         </div>
       </div>
-    )
-}
+    );
+};
 
-export default newStory
+export default newStory;

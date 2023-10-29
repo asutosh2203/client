@@ -1,6 +1,4 @@
 import { client, urlFor } from '../../sanityClient';
-import { GetStaticProps } from 'next';
-import { Author, Post } from '../../typings';
 import { fetchAuthor } from '../../utils/sanityQueries';
 import Head from 'next/head';
 import { Header } from '../../components';
@@ -12,10 +10,7 @@ import { useSession } from 'next-auth/react';
 import { AuthLoading, Unauth } from '../../components';
 import Link from 'next/link';
 
-const User: React.FC<{ author: Author; postsByAuthor: [Post] }> = ({
-  author,
-  postsByAuthor,
-}) => {
+const User = ({ author, postsByAuthor }) => {
   const router = useRouter();
 
   const { status, data } = useSession();
@@ -28,7 +23,7 @@ const User: React.FC<{ author: Author; postsByAuthor: [Post] }> = ({
       <Head>
         <title>@{author.username}</title>
       </Head>
-      <Header isOnAuthorPage />
+      <Header isOnAuthorPage isOnProfile={author._id === data.user?.id} />
       <div className='max-w-3xl mx-auto p-5 relative'>
         <div className='absolute -left-56 top-16 w-48 hideProfile'>
           <img
@@ -54,12 +49,27 @@ const User: React.FC<{ author: Author; postsByAuthor: [Post] }> = ({
           <div className='max-w-7xl mx-auto'>
             <div className='text-center'>
               <h2 className='text-3xl font-bold my-4'>No posts yet</h2>
-              <p className='text-lg mb-4'>Express yourself to the world</p>
-              <Link href='/new-story'>
-                <p className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
-                  Write a Story
-                </p>
-              </Link>
+              {data?.user?.id === author._id ? (
+                <>
+                  <p className='text-lg mb-4'>Express yourself to the world</p>
+                  <Link href='/new-story'>
+                    <p className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
+                      Write a Story
+                    </p>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <p className='text-lg mb-4'>
+                    The user hasn't authored any stories yet.
+                  </p>
+                  <Link href='/'>
+                    <p className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
+                      View other stories
+                    </p>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -94,7 +104,7 @@ const User: React.FC<{ author: Author; postsByAuthor: [Post] }> = ({
                 </p>
                 <p className='flex items-center text-gray-400 mt-4'>
                   {!!post.appreciatedBy?.filter(
-                    (appreciator: any) => appreciator._ref === data?.user?.id
+                    (appreciator) => appreciator._ref === data?.user?.id
                   ).length ? (
                     <AiFillHeart fontSize={24} className='mr-2' />
                   ) : (
@@ -118,7 +128,7 @@ export const getStaticPaths = async () => {
 
   const authors = await client.fetch(query);
 
-  const paths = authors.map((author: Author) => ({
+  const paths = authors.map((author) => ({
     params: {
       _id: author._id,
     },
@@ -130,7 +140,7 @@ export const getStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps = async ({ params }) => {
   const query = fetchAuthor;
   const author = await client.fetch(query, {
     _id: params?._id,

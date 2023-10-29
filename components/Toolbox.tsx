@@ -9,6 +9,7 @@ const Toolbox: React.FC<{
   author: any;
 }> = ({ user, author }) => {
   const router = useRouter();
+
   return (
     <div className='flex z-50 flex-col p-5 border border-gray-200 shadow-lg absolute bg-white top-12 min-w-[250px] right-0'>
       <div
@@ -42,7 +43,13 @@ const Toolbox: React.FC<{
         >
           Write a Story
         </p>
-        <p className='cursor-pointer text-gray-500 hover:text-black mb-5'>
+        <p
+          className='cursor-pointer text-gray-500 hover:text-black mb-5'
+          onClick={(e) => {
+            e.preventDefault();
+            router.push(`/${user!.id}`);
+          }}
+        >
           Stories
         </p>
       </div>

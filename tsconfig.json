@@ -15,6 +15,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/api/auth/[...nextauth].js", "pages/user/edit-profile.jsx", "components/SearchBar.jsx", "pages/index.jsx", "pages/post/[_id].tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/api/auth/[...nextauth].js", "pages/user/edit-profile.jsx", "components/SearchBar.jsx", "pages/index.jsx", "pages/post/[_id].tsx", "pages/[_id].jsx", "pages/user/[_id].jsx", "components/Header.jsx"],
   "exclude": ["node_modules"]
 }

@@ -141,7 +141,7 @@ const Post = ({ post }: Props) => {
       <Head>
         <title>{post.title}</title>
       </Head>
-      <Header />
+      <Header isOnAuthorPage={false} isOnProfile={false} />
       {toggleResponse && (
         <div className='w-1/6 min-w-[300px] fixed bg-white h-screen overflow-y-auto shadow-md z-50 animate-slide-in fullWidth'>
           <div className='absolute w-full flex justify-end items-center mt-7 px-3 '>
@@ -252,7 +252,7 @@ const Post = ({ post }: Props) => {
                 ) : (
                   <AiOutlineHeart
                     onClick={() => {
-                      appreciatePost(post._id)
+                      appreciatePost(post._id);
                     }}
                     className='text-2xl mr-2'
                   />
@@ -333,7 +333,7 @@ const Post = ({ post }: Props) => {
               ) : (
                 <AiOutlineHeart
                   onClick={() => {
-                    appreciatePost(post._id)
+                    appreciatePost(post._id);
                   }}
                   className='text-2xl mr-2'
                 />

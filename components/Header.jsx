@@ -12,16 +12,13 @@ import {
   names,
 } from 'unique-names-generator';
 
-const Header: React.FC<{ isOnAuthorPage?: boolean; isOnProfile?: boolean }> = ({
-  isOnAuthorPage,
-  isOnProfile,
-}) => {
-  const [showToolbox, setShowToolbox] = useState<boolean>(false);
-  const [user, setUser] = useState<any>();
-  const [author, setAuthor] = useState<any>();
+const Header = ({ isOnAuthorPage, isOnProfile }) => {
+  const [showToolbox, setShowToolbox] = useState(false);
+  const [user, setUser] = useState();
+  const [author, setAuthor] = useState();
   const { status } = useSession();
 
-  const config: Config = {
+  const config = {
     dictionaries: [colors, names],
     separator: '',
     style: 'capital',
@@ -35,20 +32,26 @@ const Header: React.FC<{ isOnAuthorPage?: boolean; isOnProfile?: boolean }> = ({
       if (data) {
         setUser(data?.user);
         client.createIfNotExists({
-          _id: data?.user?.id!,
+          _id: data?.user?.id,
           _type: 'author',
-          name: data?.user?.name!,
-          email: data?.user?.email!,
+          name: data?.user?.name,
+          email: data?.user?.email,
           username: userName,
           imageUrl: data?.user?.image,
         });
-        const query = fetchUserById(data?.user?.id!);
+        const query = fetchUserById(data?.user?.id);
         client.fetch(query).then((data) => {
           setAuthor(data[0]);
         });
       }
     });
   }, []);
+
+  const alertProgress = () => {
+    alert(
+      "We know nothing happens when you click there. Don't worry, your mouse is perfectly fine. We're sorry but this feature is still under development. 😅"
+    );
+  };
 
   return (
     <header className='flex justify-between items-center p-5 shadow-[0_2px_10px_rgba(0,0,0,0.25)] sticky-header bg-white max-w-[2100px] mx-auto'>
@@ -62,9 +65,16 @@ const Header: React.FC<{ isOnAuthorPage?: boolean; isOnProfile?: boolean }> = ({
         </Link>
         {isOnAuthorPage && !isOnProfile && (
           <div className='hidden md:inline-flex items-center space-x-5'>
-            <h3 className='cursor-pointer'>About</h3>
-            <h3 className='cursor-pointer'>Contact</h3>
-            <h3 className='text-white bg-green-600 px-4 py-1 rounded-full cursor-pointer'>
+            <h3 onClick={alertProgress} className='cursor-pointer'>
+              About
+            </h3>
+            <h3 onClick={alertProgress} className='cursor-pointer'>
+              Contact
+            </h3>
+            <h3
+              onClick={alertProgress}
+              className='text-white bg-green-600 px-4 py-1 rounded-full cursor-pointer'
+            >
               Follow
             </h3>
           </div>
@@ -87,11 +97,8 @@ const Header: React.FC<{ isOnAuthorPage?: boolean; isOnProfile?: boolean }> = ({
               onClick={() => {
                 setShowToolbox(!showToolbox);
               }}
-              onPointerEnter={() => {
-                setShowToolbox(true);
-              }}
             />
-            {showToolbox && <Toolbox author={author} user={user!} />}
+            {showToolbox && <Toolbox author={author} user={user} />}
           </div>
         ) : (
           <h3

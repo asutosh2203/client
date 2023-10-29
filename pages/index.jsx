@@ -40,12 +40,17 @@ export default function Home({ posts }) {
             .then((posts) => setFollowedPosts(posts));
       }
     });
-  }, [following.length]);
+  }, []);
 
   return (
     <div className='max-w-7xl mx-auto'>
       <Head>
         <title>Medium 2.0</title>
+        <meta
+          name='description'
+          content='A place to read, write and connect'
+          key='desc'
+        />
       </Head>
       <Header />
       {/* <SearchBar />
@@ -58,7 +63,7 @@ export default function Home({ posts }) {
         heading="'Medium is a place to read, write and connect'"
         subHeading="It's easy and free to post your thinking on any topic and connect with millions of readers."
       />
-      <Posts posts={followedPosts} />
+      <Posts posts={posts} />
     </div>
   );
 }

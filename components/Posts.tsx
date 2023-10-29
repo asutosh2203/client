@@ -2,20 +2,31 @@ import Link from 'next/link';
 import { urlFor } from '../sanityClient';
 import { Post } from '../typings';
 
-const Posts: React.FC<{ posts: [Post] }> = ({ posts = [] }) => {
+const Posts: React.FC<{ posts: [Post] | []; onFollowingPage?: boolean }> = ({
+  posts = [],
+  onFollowingPage,
+}) => {
   if (!posts.length) {
     return (
       <div className='max-w-7xl mx-auto'>
         <div className='text-center'>
-          <h2 className='text-3xl font-bold my-4'>No posts yet</h2>
-          <p className='text-lg mb-4'>
-            You can be the first to post something.
-          </p>
-          <Link href='/new-story'>
-            <a className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
-              Be the first author
-            </a>
-          </Link>
+          {!onFollowingPage ? (
+            <>
+              <h2 className='text-3xl font-bold my-4'>No posts yet</h2>
+              <p className='text-lg mb-4'>
+                You can be the first to post something.
+              </p>
+              <Link href='/new-story'>
+                <a className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
+                  Be the first author
+                </a>
+              </Link>
+            </>
+          ) : (
+            <p className='text-lg my-4'>
+              No posts to show. Follow someone to populate your feed.
+            </p>
+          )}
         </div>
       </div>
     );
