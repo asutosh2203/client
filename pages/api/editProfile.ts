@@ -15,11 +15,10 @@ export default async function createComment(
       username,
     })
     .commit()
-    .then((updatedUser) => {
-      console.log(updatedUser)
-      res.status(200).json({ message: 'Comment Submitted' })
+    .then(() => {
+      res.status(200).json({ message: 'Profile Edited' })
     })
     .catch((err) => {
-      return res.status(500).json({ message: "Couldn't Submit Comment", err })
+      return res.status(500).json({ message: "Couldn't Edit Profile:", err })
     })
 }

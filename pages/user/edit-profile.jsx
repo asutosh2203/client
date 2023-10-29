@@ -128,7 +128,6 @@ const EditProfile = () => {
           },
         })
         .commit()
-        .then((data) => console.log(data))
         .catch((err) => {
           console.error('Image upload error', err);
         });

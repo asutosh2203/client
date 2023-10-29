@@ -59,6 +59,7 @@ const newStory = () => {
         });
     } else {
       setImageError(true);
+      setImageLoading(false);
     }
   };
 
