@@ -1,5 +1,5 @@
-import NextAuth from 'next-auth/next'
-import GoogleProvider from 'next-auth/providers/google'
+import NextAuth from 'next-auth/next';
+import GoogleProvider from 'next-auth/providers/google';
 
 export default NextAuth({
   providers: [
@@ -13,14 +13,15 @@ export default NextAuth({
     async jwt({ token, account, user }) {
       // Persist the OAuth access_token to the token right after signin
       if (user) {
-        token.id = user.id
+        token.id = user.id;
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
       // Send properties to the client, like an access_token from a provider.
-      session.user.id = token.id
-      return session
+      session.user.id = token.id;
+      return session;
     },
   },
-})
+  secret: 'Tze5VmwwzQX4lBtCGqsy7Bx7dNJ8N0NFNFwk4TplI8s=',
+});
